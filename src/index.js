@@ -3,7 +3,7 @@ export default function ({ Plugin, types: t }) {
     visitor: {
       Decorator(node, parent) {
         // Get the decorator expression:
-        var expression = this.get('expression');
+        let expression = this.get('expression');
 
         // The simple case: The decorator with no arguments.
         if (expression.isIdentifier({name: 'compileOut'})) {
@@ -13,18 +13,24 @@ export default function ({ Plugin, types: t }) {
         // The complex case: Argument for NODE_ENV passed:
         if (expression.get('callee').isIdentifier({name: 'compileOut'})) {
           // Grab the first argument:
-          var env = expression.get('arguments')[0];
-          // Ensure that the argument is a string:
-          if (env.isLiteral() && typeof env.node.value === 'string') {
-            // If the NODE_ENV is the same as the string value passed, compile out the node:
-            if (environment === env.node.value) {
-              this.parentPath.dangerouslyRemove();
+          let envs = expression.get('arguments');
+
+          for (let i = 0; i < envs.length; i++){
+            let env = envs[i];
+           // Ensure that the argument is a string:
+            if (env.isLiteral() && typeof env.node.value === 'string') {
+              // If the NODE_ENV is the same as the string value passed, compile out the node:
+              if (environment === env.node.value) {
+                return this.parentPath.dangerouslyRemove();
+              }
             } else {
-              this.dangerouslyRemove();
+              throw new SyntaxError('Arguments passed to @compileOut() decorator must be string literals.');
             }
-          } else {
-            throw new SyntaxError('Arguments passed to @compileOut() decorator must be string literals.');
           }
+
+          // If we hit this point, we want to keep the code in.
+          // So let's remove this decorator and move on.
+          this.dangerouslyRemove();
         }
       }
     }
