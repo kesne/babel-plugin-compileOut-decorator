@@ -1,3 +1,5 @@
+const environment = process.env.NODE_ENV || 'development';
+
 export default function ({ Plugin, types: t }) {
   return new Plugin('compileout-decorator', {
     visitor: {
