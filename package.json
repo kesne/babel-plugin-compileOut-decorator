@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-compileout-decorator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Babel plugin to remove decorated properties and classes.",
   "author": "Jordan Gensler <jordangens@gmail.com>",
   "license": "MIT",
